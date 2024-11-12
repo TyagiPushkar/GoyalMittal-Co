@@ -1,7 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import { Visibility } from '@mui/icons-material';  // Import Visibility Icon
-import { Link } from 'react-router-dom';  // Import Link from react-router-dom
+import {
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  TextareaAutosize,
+  IconButton
+} from '@mui/material';
+import { Visibility, Add as AddIcon } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,20 +32,19 @@ const TaskList = () => {
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newTask, setNewTask] = useState({
+    TaskTitle: '',
     TaskDescription: '',
     Status: 'Pending',
     EmpId: '',
     ClientID: '',
   });
 
-  const [users, setUsers] = useState([]);  // Store fetched users (employees)
-  const [clients, setClients] = useState([]);  // Store fetched clients
+  const [users, setUsers] = useState([]);
+  const [clients, setClients] = useState([]);
 
-  // Fetch tasks, users (employees), and clients on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch tasks
         const tasksResponse = await fetch('https://namami-infotech.com/GoyalMittal&CoBackend/src/task/task.php');
         const tasksData = await tasksResponse.json();
         if (tasksData.status === "success") {
@@ -31,7 +53,6 @@ const TaskList = () => {
           setError('No tasks found');
         }
 
-        // Fetch users (employees)
         const usersResponse = await fetch('https://namami-infotech.com/GoyalMittal&CoBackend/src/user/get_user.php');
         const usersData = await usersResponse.json();
         if (usersData.status === "success") {
@@ -40,7 +61,6 @@ const TaskList = () => {
           setError('No users found');
         }
 
-        // Fetch clients
         const clientsResponse = await fetch('https://namami-infotech.com/GoyalMittal&CoBackend/src/client/get_client.php');
         const clientsData = await clientsResponse.json();
         if (clientsData.status === "success") {
@@ -58,19 +78,15 @@ const TaskList = () => {
     fetchData();
   }, []);
 
-  // Handle open and close dialog
   const handleDialogOpen = () => setOpenDialog(true);
   const handleDialogClose = () => setOpenDialog(false);
 
-  // Handle form input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTask((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = async () => {
-    console.log('Submitting task data:', newTask);
-
     try {
       const response = await fetch('https://namami-infotech.com/GoyalMittal&CoBackend/src/task/task.php', {
         method: 'POST',
@@ -93,12 +109,17 @@ const TaskList = () => {
   };
 
   return (
-    <Box sx={{ padding: 0 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+    <Box sx={{ padding: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#FFB300' }}>
           Task List
         </Typography>
-        <Button variant="contained" size='small' sx={{ backgroundColor: '#1e2125' }} onClick={handleDialogOpen}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          sx={{ backgroundColor: '#1e2125', color: '#FFFFFF' }}
+          onClick={handleDialogOpen}
+        >
           Add New Task
         </Button>
       </Box>
@@ -110,31 +131,37 @@ const TaskList = () => {
       )}
 
       {error && !loading && (
-        <Typography color="error" sx={{ textAlign: 'center' }}>{error}</Typography>
+        <Typography color="error" sx={{ textAlign: 'center', mt: 2 }}>{error}</Typography>
       )}
 
       {!loading && !error && (
-        <TableContainer component={Paper} sx={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: 2 }}>
+        <TableContainer component={Paper} sx={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', borderRadius: 3 }}>
           <Table size='small'>
             <TableHead sx={{ bgcolor: '#1e2125' }}>
               <TableRow>
-                {['Task Description', 'Status', 'Employee ID', 'Client ID', 'Actions'].map((header) => (
-                  <TableCell key={header} sx={{ color: '#FFFFFF', fontWeight: 'bold' }}>{header}</TableCell>
+                {['ID', 'Task Title', 'Employee Name', 'Company Name', 'Status', 'Actions'].map((header) => (
+                  <TableCell key={header} sx={{ color: '#FFFFFF', fontWeight: 'bold', textAlign: 'center' }}>
+                    {header}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {tasks.map((task, index) => (
-                <TableRow key={index} hover sx={{ '&:nth-of-type(odd)': { bgcolor: '#f5f5f5' } }}>
-                  <TableCell>{task.TaskDescription}</TableCell>
-                  <TableCell>{task.Status}</TableCell>
-                  <TableCell>{task.EmpId}</TableCell>
-                  <TableCell>{task.ClientID}</TableCell>
-                  <TableCell>
-                    {/* View Button with Icon */}
-                    <Link to={`/task-detail/${task.TaskID}`}>
-                      <Visibility color="primary" />
-                    </Link>
+                <TableRow key={index} hover sx={{ '&:hover': { bgcolor: '#f0f0f0' } }}>
+                  <TableCell sx={{ textAlign: 'center' }}>{task.TaskID}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{task.TaskTitle}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    {users.find(user => user.EmpId === task.EmpId)?.Name || 'N/A'}
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    {clients.find(client => client.ClientID === task.ClientID)?.CompanyName || 'N/A'}
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{task.Status}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <IconButton component={Link} to={`/task-detail/${task.TaskID}`} color="primary">
+                      <Visibility />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -144,40 +171,9 @@ const TaskList = () => {
       )}
 
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Add New Task</DialogTitle>
-        <DialogContent>
-          {['TaskDescription', 'Status'].map((field) => (
-            <TextField
-              key={field}
-              margin="dense"
-              label={field.replace(/([A-Z])/g, ' $1').trim()}
-              name={field}
-              fullWidth
-              variant="outlined"
-              value={newTask[field]}
-              onChange={handleInputChange}
-            />
-          ))}
-          
-          {/* Employee Dropdown */}
-          <FormControl fullWidth margin="dense" variant="outlined">
-            <InputLabel>Employee</InputLabel>
-            <Select
-              name="EmpId"
-              value={newTask.EmpId}
-              onChange={handleInputChange}
-              label="Employee"
-            >
-              {users.map((user) => (
-                <MenuItem key={user.EmpId} value={user.EmpId}>
-                  {user.Name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {/* Client Dropdown */}
-          <FormControl fullWidth margin="dense" variant="outlined">
+        <DialogTitle sx={{ bgcolor: '#1e2125', color: '#FFB300', textAlign: 'center' }}>Add New Task</DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          <FormControl size='small' fullWidth margin="dense" variant="outlined">
             <InputLabel>Client</InputLabel>
             <Select
               name="ClientID"
@@ -188,6 +184,44 @@ const TaskList = () => {
               {clients.map((client) => (
                 <MenuItem key={client.ClientID} value={client.ClientID}>
                   {client.CompanyName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <TextField
+            margin="dense"
+            label="Task Title"
+            name="TaskTitle"
+            fullWidth
+            variant="outlined"
+            value={newTask.TaskTitle}
+            onChange={handleInputChange}
+            size='small'
+          />
+
+          <TextareaAutosize
+            placeholder="Task Description"
+            name="TaskDescription"
+            fullWidth
+            minRows={4}
+            maxRows={4}
+            value={newTask.TaskDescription}
+            onChange={handleInputChange}
+            style={{ width: '95%', resize: 'none', marginTop: 16, padding: 8 }}
+          />
+
+          <FormControl size='small' fullWidth margin="dense" variant="outlined" sx={{ mt: 2 }}>
+            <InputLabel>Employee</InputLabel>
+            <Select
+              name="EmpId"
+              value={newTask.EmpId}
+              onChange={handleInputChange}
+              label="Employee"
+            >
+              {users.map((user) => (
+                <MenuItem key={user.EmpId} value={user.EmpId}>
+                  {user.Name}
                 </MenuItem>
               ))}
             </Select>

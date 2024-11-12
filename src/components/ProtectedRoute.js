@@ -1,15 +1,23 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }) => {
-    const user = JSON.parse(localStorage.getItem('user'));  // Get the user data from localStorage
+const ProtectedRoute = ({ children, allowedRoles }) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const location = useLocation();
 
-    // If there's no user, redirect to the login page
+    // Redirect to login if the user is not authenticated
     if (!user) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/" />;
     }
 
-    return children;  // If the user exists, show the protected content
+    // Check if the user's role is in the allowed roles
+    if (allowedRoles && !allowedRoles.includes(user.Role)) {
+        // Redirect non-admins to the task page if they try to access restricted routes
+        return <Navigate to="/task" state={{ from: location }} />;
+    }
+
+    // If authenticated and authorized, render the child components
+    return children;
 };
 
 export default ProtectedRoute;

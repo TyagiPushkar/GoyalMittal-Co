@@ -23,10 +23,14 @@ import axios from 'axios';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#FFB300', // Match the sidebar's accent color
     },
-    secondary: {
-      main: '#f50057',
+    background: {
+      default: '#1e2125', // Dark background for page
+      paper: '#2a2d33', // Dark background for form container
+    },
+    text: {
+      primary: '#FFFFFF', // White text for better contrast
     },
   },
   typography: {
@@ -35,7 +39,7 @@ const theme = createTheme({
 });
 
 function Login() {
-  const [identifier, setIdentifier] = useState('');  // EmpId, Mobile, or Email
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -54,10 +58,10 @@ function Login() {
       });
 
       if (response.data.status === 'success') {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         setTimeout(() => {
           setLoading(false);
-          navigate('/dashboard');  // Redirect to the dashboard on success
+          navigate('/task');
         }, 1500);
       } else {
         setLoading(false);
@@ -74,15 +78,15 @@ function Login() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', alignItems: 'center', minHeight: '100vh', justifyContent: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', minHeight: '100vh', justifyContent: 'center', bgcolor: 'background.default' }}>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item xs={12} md={6}>
-            <Paper elevation={10} sx={{ padding: 4, borderRadius: 3 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Avatar sx={{ m: 1, bgcolor: '#1976d2' }}>
+            <Paper elevation={10} sx={{ padding: 4, borderRadius: 3, bgcolor: 'background.paper' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'text.primary' }}>
+                <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
                   <LockOutlinedIcon />
                 </Avatar>
-                <Typography variant="h5" align="center" sx={{ mt: 1 }}>
+                <Typography variant="h5" align="center" sx={{ mt: 1, fontWeight: 'bold' }}>
                   Login to Dashboard
                 </Typography>
                 {error && <Typography variant="body2" color="error" align="center">{error}</Typography>}
@@ -95,6 +99,8 @@ function Login() {
                     variant="outlined"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
+                    InputProps={{ style: { color: '#FFF' } }}
+                    InputLabelProps={{ style: { color: '#FFB300' } }}
                   />
                   <TextField
                     fullWidth
@@ -107,22 +113,24 @@ function Login() {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={handleClickShowPassword} edge="end">
+                          <IconButton onClick={handleClickShowPassword} edge="end" sx={{ color: 'primary.main' }}>
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
                       ),
+                      style: { color: '#FFF' },
                     }}
+                    InputLabelProps={{ style: { color: '#FFB300' } }}
                   />
                   <Button
                     fullWidth
                     variant="contained"
                     color="primary"
                     type="submit"
-                    sx={{ mt: 3, py: 1.5 }}
+                    sx={{ mt: 3, py: 1.5, fontWeight: 'bold', color: '#1e2125' }}
                     disabled={loading}
                   >
-                    {loading ? <CircularProgress size={24} /> : 'Login'}
+                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
                   </Button>
                 </form>
               </Box>

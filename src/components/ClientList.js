@@ -92,16 +92,16 @@ const ClientList = () => {
         </Box>
       )}
 
-      {error && !loading && (
+      {/* {error && !loading && (
         <Typography color="error" sx={{ textAlign: 'center' }}>{error}</Typography>
-      )}
+      )} */}
 
       {!loading && !error && (
         <TableContainer component={Paper} sx={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: 2 }}>
           <Table size='small'>
             <TableHead sx={{ bgcolor: '#1e2125' }}>
               <TableRow>
-                {['Client Name', 'Company Name', 'Mobile', 'Email', 'Address', 'GST Number', 'PAN Number', 'Status', 'Actions'].map((header) => (
+                {['Client Name', 'Company Name',  'GST Number', 'Status', 'Actions'].map((header) => (
                   <TableCell key={header} sx={{ color: '#FFFFFF', fontWeight: 'bold' }}>{header}</TableCell>
                 ))}
               </TableRow>
@@ -111,11 +111,8 @@ const ClientList = () => {
                 <TableRow key={index} hover sx={{ '&:nth-of-type(odd)': { bgcolor: '#f5f5f5' } }}>
                   <TableCell>{client.ContactPerson}</TableCell>
                   <TableCell>{client.CompanyName}</TableCell>
-                  <TableCell>{client.Mobile}</TableCell>
-                  <TableCell>{client.Email}</TableCell>
-                  <TableCell>{client.Address}</TableCell>
+                 
                   <TableCell>{client.GSTNumber}</TableCell>
-                  <TableCell>{client.PANNumber}</TableCell>
                   <TableCell>{client.Status}</TableCell>
                   <TableCell>
                     {/* View Button with Icon */}
@@ -133,7 +130,7 @@ const ClientList = () => {
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add New Client</DialogTitle>
         <DialogContent>
-          {['ContactPerson', 'CompanyName', 'Mobile', 'Email', 'Address', 'GSTNumber', 'PANNumber'].map((field) => (
+          {['CompanyName','ContactPerson',  'Mobile', 'Email', 'Address', 'GSTNumber', 'PANNumber'].map((field) => (
             <TextField
               key={field}
               margin="dense"
@@ -142,7 +139,8 @@ const ClientList = () => {
               fullWidth
               variant="outlined"
               value={newClient[field]}
-              onChange={handleInputChange}
+                  onChange={handleInputChange}
+                  size='small'
             />
           ))}
         </DialogContent>

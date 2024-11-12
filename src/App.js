@@ -3,11 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';  // Import the ProtectedRoute component
+import ProtectedRoute from './components/ProtectedRoute';
 import EmployeeList from './components/EmployeeList';
 import ClientList from './components/ClientList';
 import ClientDetail from './components/ClientDetail';
 import TaskList from './components/TaskList';
+import TaskDetail from './components/TaskDetail';
 
 function App() {
     return (
@@ -15,12 +16,12 @@ function App() {
             <Routes>
                 {/* Public Route */}
                 <Route path="/" element={<Login />} />
-                
+
                 {/* Protected Routes */}
                 <Route
                     path="/dashboard"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['Admin']}>
                             <Layout>
                                 <Dashboard />
                             </Layout>
@@ -30,7 +31,7 @@ function App() {
                 <Route
                     path="/employee"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['Admin']}>
                             <Layout>
                                 <EmployeeList />
                             </Layout>
@@ -40,9 +41,9 @@ function App() {
                 <Route
                     path="/clients"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['Admin']}>
                             <Layout>
-                                <ClientList/>
+                                <ClientList />
                             </Layout>
                         </ProtectedRoute>
                     }
@@ -50,9 +51,9 @@ function App() {
                 <Route
                     path="/client-detail/:id"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['Admin']}>
                             <Layout>
-                                <ClientDetail/>
+                                <ClientDetail />
                             </Layout>
                         </ProtectedRoute>
                     }
@@ -60,9 +61,19 @@ function App() {
                 <Route
                     path="/task"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={['Admin', 'Employee']}>
                             <Layout>
-                                <TaskList/>
+                                <TaskList />
+                            </Layout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/task-detail/:id"
+                    element={
+                        <ProtectedRoute allowedRoles={['Admin', 'Employee']}>
+                            <Layout>
+                                <TaskDetail />
                             </Layout>
                         </ProtectedRoute>
                     }
