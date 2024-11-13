@@ -78,7 +78,7 @@ function Login() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', alignItems: 'center', minHeight: '100vh', justifyContent: 'center', bgcolor: 'background.default' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', minHeight: '100vh', justifyContent: 'center',bgcolor: 'background.default' }}>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item xs={12} md={6}>
             <Paper elevation={10} sx={{ padding: 4, borderRadius: 3, bgcolor: 'background.paper' }}>

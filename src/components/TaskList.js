@@ -27,7 +27,7 @@ import { Visibility, Add as AddIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 const TaskList = () => {
-  const [tasks, setTasks] = useState([]);
+ const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -41,6 +41,10 @@ const TaskList = () => {
 
   const [users, setUsers] = useState([]);
   const [clients, setClients] = useState([]);
+  
+  // Assume user data is obtained from local storage or context
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const { EmpId: loggedInEmpId, Role } = user;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +52,9 @@ const TaskList = () => {
         const tasksResponse = await fetch('https://namami-infotech.com/GoyalMittal&CoBackend/src/task/task.php');
         const tasksData = await tasksResponse.json();
         if (tasksData.status === "success") {
-          setTasks(tasksData.tasks);
+          // Filter tasks based on role
+          const filteredTasks = Role === "Admin" ? tasksData.tasks : tasksData.tasks.filter(task => task.EmpId === loggedInEmpId);
+          setTasks(filteredTasks);
         } else {
           setError('No tasks found');
         }
@@ -76,7 +82,7 @@ const TaskList = () => {
     };
 
     fetchData();
-  }, []);
+  }, [loggedInEmpId, Role]);
 
   const handleDialogOpen = () => setOpenDialog(true);
   const handleDialogClose = () => setOpenDialog(false);
@@ -175,7 +181,7 @@ const TaskList = () => {
         <DialogContent sx={{ pt: 3 }}>
           <FormControl size='small' fullWidth margin="dense" variant="outlined">
             <InputLabel>Client</InputLabel>
-            <Select
+            <Select 
               name="ClientID"
               value={newTask.ClientID}
               onChange={handleInputChange}
